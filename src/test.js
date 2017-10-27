@@ -1,7 +1,7 @@
 const ss = require('./subsonic')({
-  username: 'simonwjackson',
-  password: 'Magn0v0X',
-  server: 'goomba.mynetgear.com:7007'
+  username: '',
+  password: '',
+  server: ''
 });
 
 (async () => {
