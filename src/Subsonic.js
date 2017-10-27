@@ -1,35 +1,12 @@
 const { ungroupCollection } = require('./utils')
-const axios = require('axios')
+const API = require('./API')
 
 // Subsonic
 //
 // @param  {object} config username, password, server are all required (application, format, and version optional)
 // @return {Subsonic} this
 const Subsonic = function ({ username, password, server, application = 'subsonic node.js api' }) {
-  const format = 'json'
-  const version = '1.14'
-
-  /**
-   * get
-   *
-   * @param {any} path
-   * @param {any} query
-   * @param {any} cb
-   * @returns
-   */
-  function get (path, query) {
-    const params = Object.assign({
-      u: username,
-      p: password,
-      c: application,
-      v: version,
-      f: format
-    }, query)
-
-    return axios.get(`http://${server}/rest/${path}.view`, { params })
-      .then(res => res.data['subsonic-response'])
-    // .query(typeof query !== 'function' ? query : undefined)
-  }
+  const api = API({username, password, server, application})
 
   // http://your-server/rest/ping.view
   /**
@@ -38,16 +15,14 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
    * @param {any} cb
    * @returns {Promise}
    */
-  function ping (cb) {
-    return get('ping')
-  }
+  const ping = (cb) => api.get('ping')
 
   // http://your-server/rest/getMusicFolders.view
   //
   // @param  {function} callback err, response
   // @return {Subsonic} this
   function topLevelFolders (cb) {
-    return get('getMusicFolders', res => cb(null, res.musicFolders.musicFolder))
+    return api.get('getMusicFolders', res => cb(null, res.musicFolders.musicFolder))
   }
 
   // http://your-server/rest/getIndexes.view
@@ -55,7 +30,7 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
   // @param  {function} callback err, response
   // @return {Subsonic} this
   function indexes (cb) {
-    return get('getIndexes', res => cb(null, res.indexes.index))
+    return api.get('getIndexes', res => cb(null, res.indexes.index))
   }
 
   // http://your-server/rest/getMusicDirectory.view
@@ -64,9 +39,7 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
   // @param  {function} callback err, response
   // @return {Subsonic} this
   function folder (id, cb) {
-    return get('getMusicDirectory', {
-      id
-    }, res => cb(null, {
+    return api.get('getMusicDirectory', { id }, res => cb(null, {
       children: (res.directory != null ? res.directory.child : undefined),
       id: (res.directory != null ? res.directory.id : undefined),
       name: (res.directory != null ? res.directory.name : undefined)
@@ -84,7 +57,7 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
       }) : artists
     }
 
-    return get('getArtists')
+    return api.get('getArtists')
       .then(res => res.artists)
       .then(modify)
   }
@@ -94,9 +67,7 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
   // @param  {number} id
   // @return {Promise} this
   function artist (id) {
-    return get('getArtistInfo2', {
-      id
-    }).then(res => res.artistInfo2)
+    return api.get('getArtistInfo2', { id }).then(res => res.artistInfo2)
   }
 
   // http://your-server/rest/getAlbum.view
@@ -105,9 +76,7 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
   // @param  {function} callback err, response
   // @return {Subsonic} this
   function album (id, cb) {
-    return get('getAlbum', {
-      id
-    })
+    return api.get('getAlbum', { id })
   }
 
   // http://your-server/rest/getSong.view
@@ -116,9 +85,19 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
   // @param  {function} callback err, response
   // @return {Subsonic} this
   function song (id) {
-    return get('getSong', {
-      id
-    })
+    return api.get('getSong', { id })
+  }
+
+  // http://your-server/rest/getSong.view
+  //
+  // @param  {number} id
+  // @param  {function} callback err, response
+  // @return {Subsonic} this
+  function songs ({ random = false }) {
+    if (random) {
+      return api.getRandomSongs({songs: 10})
+        .then(res => res.randomSongs.song)
+    }
   }
 
   return {
@@ -129,7 +108,8 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
     artists,
     artist,
     album,
-    song
+    song,
+    songs
   }
 }
 
