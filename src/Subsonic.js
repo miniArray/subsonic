@@ -88,12 +88,16 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
     return api.get('getSong', { id })
   }
 
+  function cover (id, { contents = false } = {}) {
+    return api.getCoverArt(id, { contents })
+  }
+
   // http://your-server/rest/getSong.view
   //
   // @param  {number} id
   // @param  {function} callback err, response
   // @return {Subsonic} this
-  function songs ({ random = false }) {
+  function songs ({ random = false } = {}) {
     if (random) {
       return api.getRandomSongs({songs: 10})
         .then(res => res.randomSongs.song)
@@ -109,7 +113,8 @@ const Subsonic = function ({ username, password, server, application = 'subsonic
     artist,
     album,
     song,
-    songs
+    songs,
+    cover
   }
 }
 
