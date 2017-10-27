@@ -1,26 +1,22 @@
 {
   "name": "subsonic",
-  "version": "0.0.3",
-  "description": "Interface with the subsonic api",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/switz/subsonic.git"
-  },
-  "author": "Daniel Saewitz",
-  "license": "MIT",
-  "readmeFilename": "README.md",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "coffee-script": "~1.6.1",
-    "superagent": "~0.13.0",
-    "nconf": "~0.6.7"
+    "axios": "^0.16.2"
   },
   "devDependencies": {
-    "expect.js": "~0.2.0",
-    "mocha": "~1.8.2",
-    "codo": "~1.5.6"
-  },
-  "scripts": {
-    "test": "mocha"
+    "documentation": "^5.3.3",
+    "eslint": "^4.4.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1"
   }
 }
